@@ -26,7 +26,7 @@ STOP_RANDOM_CALLBACK = "stop_random"
 logger = logging.getLogger(__name__)
 
 # токен бота(не воруйте)
-# TOKEN = '5371583248:AAHcO84QNtnGNArVqZ6bgVnVlbFq4WELnDU'
+TOKEN = '5371583248:AAHcO84QNtnGNArVqZ6bgVnVlbFq4WELnDU'
 
 # прописываю markups для вызова потом
 base_keyboard = [["/Picture"], ["/Favorites", "/Random"]]
