@@ -8,7 +8,9 @@ from telegram.ext import CallbackQueryHandler
 from telegram import ReplyKeyboardMarkup, ReplyKeyboardRemove, Bot, User
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from Samila_generations import generate, return_proj
+import time
 
+TIME_TO_UPDATE = 24 * 360
 # Запускаем логгирование
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG
