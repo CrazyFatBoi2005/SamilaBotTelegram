@@ -143,9 +143,10 @@ def chose_name(update, context):
                        context.user_data['picture_data']['name']) == 0:
         update.message.reply_text("Имя повторяется, выберите другое")
         return 4
-    # return != 0 -> мы оповещаем юзера о добавлении картинки и завершаем диалог
-    update.message.reply_text("Картинка добавленна в избранное", reply_markup=base_markup)
-    return ConversationHandler.END
+    else:
+        # return != 0 -> мы оповещаем юзера о добавлении картинки и завершаем диалог
+        update.message.reply_text("Картинка добавленна в избранное", reply_markup=base_markup)
+        return ConversationHandler.END
 
 
 # Улавливаем callback и реагируем на него
@@ -153,6 +154,7 @@ def callback_query_fav_handler(update, context):
     cqd = update.callback_query.data
     user = update.callback_query.from_user
     # добавление в любимые
+    print(cqd)
     if cqd == FAVORITE_CALLBACK:
         user.send_message('Введите имя картинки:\nИмя картинки не должно повторяться')
         update.callback_query.edit_message_reply_markup(None)
@@ -170,8 +172,10 @@ def callback_query_fav_handler(update, context):
 def callback_query_handler(update, context):
     cqd = update.callback_query.data
     user = update.callback_query.from_user
+    print(cqd)
     # Общие колбэки имеют формат 'команда!путь', так я отслеживаю действие, а потом делаю его с нужной картинкой
     if cqd.split('!')[0] == 'PATH':
+        print('патх')
         path = cqd.split('!')[1]
         markup = InlineKeyboardMarkup([
             [InlineKeyboardButton('Удалить', callback_data=f"DEL!{path}")],
@@ -252,6 +256,7 @@ def write_name(update, context):
 def random_callback_query_handler(update, context):
     cqd = update.callback_query.data
     user = update.callback_query.from_user
+    print(cqd)
     # Добавить в базу
     if cqd.split('!')[0] == 'ADD':
         user.send_message('Введите имя картинки:\nИмя картинки не должно повторяться')
@@ -259,10 +264,12 @@ def random_callback_query_handler(update, context):
         return 2
     # Выбрать следующую картинку(рандомную)
     elif cqd == NEXT_RANDOM_CALLBACK:
+        bot.deleteMessage(chat_id=user.id, message_id=update.callback_query.message.message_id)
         next_random(update, context)
         return
     # Прекратить смотреть рандомные картинки
     elif cqd == STOP_RANDOM_CALLBACK:
+        bot.deleteMessage(chat_id=user.id, message_id=update.callback_query.message.message_id)
         bot.send_message(chat_id=user.id,
                          text='Приходите в другой раз! Наша база постоянно пополняется.',
                          reply_markup=base_markup)
@@ -274,7 +281,8 @@ def random_callback_query_handler(update, context):
 def next_random(update, context):
     user_id = context.user_data['picture_data']['user']
     file = choose_random(user_id)
-    context.user_data['picture_data']['path'] = file
+    context.user_data['picture_data']['file'] = file
+    print(context.user_data['picture_data'], file)
     random_markup = InlineKeyboardMarkup([
         [InlineKeyboardButton(text='Добавить в избранное',
                               callback_data='ADD!' + file)],
@@ -302,6 +310,7 @@ def get_random(update, context):
     if len(context.user_data.keys()) == 0:
         context.user_data['picture_data'] = {'user': user.id}
     context.user_data['picture_data']['file'] = file
+    print(context.user_data['picture_data'], file)
     random_markup = InlineKeyboardMarkup([
         [InlineKeyboardButton(text='Добавить в избранное',
                               callback_data='ADD!' + file)],
